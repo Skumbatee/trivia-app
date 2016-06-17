@@ -3,7 +3,12 @@
 
 #creating flask object
 from flask import Flask
+from flask_sqlachemy import SQLAlchemy
 app=Flask(__name__)
+
+#create database object
+app.config['SQLALCHEMY_DATABASE_URI']= 'postgresql://elsis:elsis@localhost/triviapp'
+db=SQLAlchemy(app)
 
 #making the WSGI interface accessible at top level
 wsgi_app=app.wsgi_app
