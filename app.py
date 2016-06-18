@@ -11,13 +11,13 @@ app.config['SQLALCHEMY_DATABASE_URI']= 'postgresql://postgres:postgres@localhost
 #turning on debugger
 app.debug = True
 #create database object
-db=SQLAlchemy(app)
+db =SQLAlchemy(app)
 
 #making the WSGI interface accessible at top level
 wsgi_app=app.wsgi_app
 
 #import all of our routes from routes routes.py
-from routes import *;
+from routes import *
 
 #Launching our server
 if __name__ == '__main__':
@@ -36,7 +36,7 @@ class AskQuestions(db.Model):
 	question= db.Column(db.String(200),unique=False)
 	answer= db.Column(db.String(100),unique=False)
 	
-	def __init__(self,title,question,answer):
+	def __init__(self,title, answer, question):
 		self.title=title
 		self.question=question
 		self.answer=answer
