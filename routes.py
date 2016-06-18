@@ -22,11 +22,14 @@ def create():
 		#send the user the form
 		return render_template('CreateQuestions.html')
 	elif request.method == 'POST':
-		#read form data and save it
-		title =request.form['title']
-		question =request.form['question']
-		answer =request.form['answer']  
+		#read form data 
+		questions= AnswerQuestions(request.form['title'],request.form['question'],request.form['answer'])
+
 		#store data in db 
+		db.session.add(questions)
+		db.session.commit()
+
+
 
 		return render_template('Createdquestion.html',question = question) 
 	else:

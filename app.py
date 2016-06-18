@@ -6,8 +6,11 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 app=Flask(__name__)
 
+
+app.config['SQLALCHEMY_DATABASE_URI']= 'postgresql://postgres:postgres@localhost/elsis'
+#turning on debugger
+app.debug = True
 #create database object
-app.config['SQLALCHEMY_DATABASE_URI']= 'postgresql://elsis:elsis@localhost/triviapp'
 db=SQLAlchemy(app)
 
 #making the WSGI interface accessible at top level
@@ -27,17 +30,16 @@ if __name__ == '__main__':
 	app.run(HOST,PORT)
 
 #creating database schema
-class AskQuestions (db.Model):
+class AskQuestions(db.Model):
 	id = db.Column(db.Integer,primary_key =True)
-	title=db.Column(db.String(50),unique = False)
-	question=db.Column(db.String(200),unique=False)
-	answer=db.Column(db.String(100),unique=False)
+	title= db.Column(db.String(50),unique = False)
+	question= db.Column(db.String(200),unique=False)
+	answer= db.Column(db.String(100),unique=False)
 	
 	def __init__(self,title,question,answer):
 		self.title=title
 		self.question=question
 		self.answer=answer
 
-	def __repr__(self):
-		return '<AskQuestions %r>' % self.title
+	
 
