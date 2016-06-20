@@ -1,5 +1,9 @@
 from flask import Flask,url_for,request,render_template
-from app import app,AskQuestions,db
+from app import app
+import redis
+
+#making redis connection
+r =redis.StrictRedis(host="localhost",port=6379,db=0,charset="utf-8",decode_responses=True)
 
 #server/
 @app.route('/')
@@ -25,20 +29,17 @@ def create():
 		return render_template('CreateQuestions.html')
 	elif request.method == 'POST':
 		#read form data and save it
-		quiz = AskQuestions(request.form['question'],request.form['title'],request.form['answer']) 
-		# if not db.session.query(AskQuestions).filter(AskQuestions.question == question).count():
-		# 	quiz = AskQuestions(question)
-		# 	db.session.add(quiz)
-		# 	db.session.commit()
-		# 	return render_template('Createdquestion.html')
-		# return render_template('CreateQuestions.html')
-		# # AskQuestions(request.form['title'],request.form['question'],request.form['answer'])
-		print quiz
-		#store data in db 
-		db.session.add(quiz)
-		db.session.commit()
+		title = request.form ['title']
+		question= request.form ['question']
+		answer = request.form ['answer']
 
-		return render_template('Createdquestion.html', quiz=quiz)
+		#store data in data store
+		#key will be whatever title they typed in : Question
+		r.set(title+':question',question)
+		r.set(title+':answer',answer)
+
+
+		return render_template('Createdquestion.html', question=question)
 	else:
 		return '<h2>Invalid request</h2>'
 
@@ -46,10 +47,12 @@ def create():
 @app.route('/question/<title>',methods=['GET','POST'])
 def questions(title):
 	if request.method == "GET":
-		#send user the form
-		question  = 'Question here'
+		#send user the 
 		#read question from data store
-		return render_template(AnswerQuestion.html,question = question)
+
+		question  = r.get(title+':question')
+		
+		return render_template('AnswerQuestion.html',question = question)
 
 	elif request.method == "POST":
 		#user has attempted to answer.Check if they are correct
@@ -57,7 +60,7 @@ def questions(title):
 
 		#Read answer from data Store
 
-		answer = "Answer"
+		answer = r.get(title+':answer')
 
 		if submittedAnswer == answer:
 			return render_template('Correct.html')
